@@ -7,14 +7,14 @@ using UnityEngine.UI;
 public class LoginController : MonoBehaviour
 {
     private Button startBtn;
-    // private Button exitBtn;
+    private Button exitBtn;
     private bool isLatestVersion = false;
     void Awake()
     {
         
         EventManager.AddEvent<bool>(EventName.LoginSetIsLatestVersion, this.LoginSetIsLatestVersion);
         startBtn = GameObject.Find("Canvas/StartBtn").GetComponent<Button>();
-        // exitBtn = GameObject.Find("Canvas/ExitBtn").GetComponent<Button>();
+        exitBtn = GameObject.Find("Canvas/ExitBtn").GetComponent<Button>();
         startBtn.onClick.AddListener(() =>
         {
             if (isLatestVersion)
@@ -26,14 +26,13 @@ public class LoginController : MonoBehaviour
             }
         });
 
-    //     exitBtn.onClick.AddListener(() =>
-    //    {
-    //        MusicMgr.Instance.PlayEffect("buttonSound01");
-    //        Tools.ShowConfirm("确认要退出游戏吗?", () =>
-    //        {
-    //            Application.Quit();
-    //        });
-    //    });
+        exitBtn.onClick.AddListener(() =>
+       {
+           TextDialog.ShowConfirm("退出确认","确认要退出游戏吗?", () =>
+           {
+               Application.Quit();
+           });
+       });
     }
 
     private void LoginSetIsLatestVersion(bool isLatestVersion)
