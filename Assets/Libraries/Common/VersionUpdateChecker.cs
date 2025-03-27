@@ -49,7 +49,7 @@ public class VersionUpdateChecker : MonoBehaviour
                 Debug.Log("Server version: " + serverVersion);
                 Debug.Log("Cur version: " + currentVersion);
                 bool needUpdate = IsNewVersionAvailable(currentVersion, serverVersion);
-                // EventManager.DispatchEvent<bool>(EventName.LoginSetIsLatestVersion, !needUpdate);
+                EventManager.DispatchEvent<bool>(EventName.LoginSetIsLatestVersion, !needUpdate);
                 // 比较服务器版本和本地版本
                 if (needUpdate)
                 {
