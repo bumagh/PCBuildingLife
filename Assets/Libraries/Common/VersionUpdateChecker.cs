@@ -56,31 +56,32 @@ public class VersionUpdateChecker : MonoBehaviour
                     // 如果有新版本，提示用户并提供更新链接
                     updateMessage.text = "有新版本更新! \n" + serverDesc;
                     // if (Application.platform != RuntimePlatform.Android || Tools.isDebug) yield break;
-                    string filePath = System.IO.Path.Combine(Application.persistentDataPath, "sgol_" + serverVersion + ".apk");
+                    string filePath = System.IO.Path.Combine(Application.persistentDataPath, "game_" + serverVersion + ".apk");
                     if (System.IO.File.Exists(filePath))
                     {
                         Debug.Log("APK already downloaded: " + filePath);
-                        // Tools.ShowConfirm("已经下载过此版本,是否立即更新?", () =>
-                        // {
-                        //     bool installRes = Install(filePath);
-                        //     Tools.ShowTip(installRes ? "启动安装成功" : "启动安装失败");
-                        // });
+                        TextDialog.ShowConfirm("版本更新", "已经下载过此版本,是否立即更新?", () =>
+                        {
+                            bool installRes = Install(filePath);
+                            TextTip.Show(installRes ? "启动安装成功" : "启动安装失败");
+                        });
                         yield break;
                     }
-                    // Tools.ShowConfirm("当前版本过低,请点击确定立即更新!", () =>
-                    // {
-                    //     downloadCoroutine = StartCoroutine(DownloadAndInstallAPK(serverapkurl, serverVersion));
-                    //     Tools.ShowVersionUpdateConfirm(() =>
-                    //     {
-                    //         StopCoroutine(downloadCoroutine);
-                    //     });
+                    TextDialog.ShowConfirm("版本更新", "当前版本过低,请点击确定立即更新!", () =>
+                    {
+                        downloadCoroutine = StartCoroutine(DownloadAndInstallAPK(serverapkurl, serverVersion));
+                        VersionUpdateDialog.Show("正在下载更新，请稍候...", () =>
+                        {
+                            StopCoroutine(downloadCoroutine);
+                        });
 
-                    // });
+                    });
 
                 }
                 else
                 {
                     updateMessage.text = "不需要更新.";
+                    TextTip.Show("不需要更新");
                 }
             }
         }
@@ -116,7 +117,7 @@ public class VersionUpdateChecker : MonoBehaviour
                 // 更新下载进度
                 downloadProgress = webRequest.downloadProgress * 100;
                 Debug.Log($"Downloading: {downloadProgress}%");
-                // EventManager.DispatchEvent<float>(EventName.PopupSetVersionUpdatePanel, downloadProgress);
+                VersionUpdateDialog.UpdateProgress(downloadProgress);
                 // 更新UI显示下载进度（如果有进度条）
                 // 这里你可以更新一个进度条或文本
                 yield return null;
@@ -128,13 +129,15 @@ public class VersionUpdateChecker : MonoBehaviour
             else
             {
                 // 将下载的 APK 保存到本地
-                // string filePath = System.IO.Path.Combine(Application.persistentDataPath, "sgol.apk");
-                string filePath = System.IO.Path.Combine(Application.persistentDataPath, "sgol_" + apkVersion + ".apk");
+                string filePath = System.IO.Path.Combine(Application.persistentDataPath, "game_" + apkVersion + ".apk");
                 System.IO.File.WriteAllBytes(filePath, webRequest.downloadHandler.data);
                 Debug.Log("APK downloaded to: " + filePath);
                 // Tools.ShowTip("下载更新完成");
                 //TODO:检测是否已经有缓存下载过避免重复下载同一版本
-                Install(filePath);
+                TextTip.Show("下载更新完成，正在启动安装...", 1.5f, () =>
+                {
+                    Install(filePath);
+                });
             }
         }
     }

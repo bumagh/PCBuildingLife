@@ -6,7 +6,7 @@ using UnityEngine.Networking;
 public class HttpService<T>
 {
     #region HTTP相关的接口定义
-    public static string HTTP_URL =Tools.isDebug ? "http://pcblapi/api/" : "https://api.tutlab.tech/api/";
+    public static string HTTP_URL =Tools.isDebug ? "http://pcblapi/api/" : "https://pcbl.tutlab.tech/api/";
     #endregion
 
     private static void SetHttpHeaders(UnityWebRequest webRequest, string extraHeader = "")
