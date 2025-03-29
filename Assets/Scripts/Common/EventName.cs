@@ -1,4 +1,5 @@
 public enum EventName
 {
-    LoginSetIsLatestVersion
+    LoginSetIsLatestVersion,
+    ShowBagPanel
 }
