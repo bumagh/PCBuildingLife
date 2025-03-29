@@ -1359,10 +1359,6 @@ PrefabInstance:
       propertyPath: m_LocalEulerAnglesHint.z
       value: 0
       objectReference: {fileID: 0}
-    - target: {fileID: 4070869376166198024, guid: c1176767dd4007b45b0155e39752ecad, type: 3}
-      propertyPath: m_IsActive
-      value: 0
-      objectReference: {fileID: 0}
     - target: {fileID: 6179535054642294818, guid: c1176767dd4007b45b0155e39752ecad, type: 3}
       propertyPath: m_Name
       value: BagPanel

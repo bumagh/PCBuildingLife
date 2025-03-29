@@ -6,14 +6,24 @@ public class BagPanel : MonoBehaviour
 {
     private GameObject panel;
     private Transform content;
+    private Transform empty;
+    private Button goShopBtn;
     private Button backBtn;
+    private Text titleText;
     void Awake()
     {
         panel = transform.Find("Panel").gameObject;
+        goShopBtn = transform.Find("Panel/Empty/GoShopBtn").GetComponent<Button>();
+        titleText = transform.Find("Panel/TopTitle/Text").GetComponent<Text>();
         content = transform.Find("Panel/CenterScrollList/Viewport/Content");
-        EventManager.AddEvent<bool>(EventName.ShowBagPanel, this.ShowBagPanel);
+        empty = transform.Find("Panel/Empty");
+        EventManager.AddEvent<bool, string>(EventName.ShowBagPanel, this.ShowBagPanel);
         backBtn = transform.Find("Panel/BackBtn").GetComponent<Button>();
         backBtn.onClick.AddListener(() =>
+        {
+            ShowBagPanel(false);
+        });
+        goShopBtn.onClick.AddListener(() =>
         {
             ShowBagPanel(false);
         });
@@ -27,8 +37,10 @@ public class BagPanel : MonoBehaviour
             Destroy(item.gameObject);
         }
     }
-    private void ShowBagPanel(bool show)
+    private void ShowBagPanel(bool show, string title = "背包")
     {
+        titleText.text = title;
+        empty.gameObject.SetActive(content.childCount == 0);
         panel.SetActive(show);
         if (show)
         {
@@ -58,10 +70,10 @@ public class BagPanel : MonoBehaviour
             // }
         }
     }
-   
+
     void OnDestroy()
     {
-        EventManager.RemoveEvent<bool>(EventName.ShowBagPanel, this.ShowBagPanel);
+        EventManager.RemoveEvent<bool, string>(EventName.ShowBagPanel, this.ShowBagPanel);
 
     }
 }

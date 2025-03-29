@@ -19,8 +19,8 @@ public class BuildingCtrl : MonoBehaviour
             int idx = i;
             buttonComp.onClick.AddListener(() =>
             {
-                Debug.Log(((CoreComp)idx).ToString());
-                EventManager.DispatchEvent<bool>(EventName.ShowBagPanel, true);
+                Debug.Log(((CoreCompSlot)idx).ToString());
+                EventManager.DispatchEvent(EventName.ShowBagPanel, true,CoreCompEnum.GetComponentType((CoreCompSlot)idx).ToString());
             });
         }
         monitorScreenImg = transform.Find("Monitor/Screen").GetComponent<Image>();
