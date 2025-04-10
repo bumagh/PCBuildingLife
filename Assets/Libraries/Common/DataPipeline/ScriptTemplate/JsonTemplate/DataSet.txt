@@ -1,0 +1,59 @@
+using System.Collections.Generic;
+using UnityEngine;
+
+public class #DataSetName#
+{
+    private List<#TableDataName#> tempList;
+    private List<#TableDataName#> dataList;
+    private Dictionary<int, #TableDataName#> dataDic;
+
+    public void SetData(List<#TableDataName#> list)
+    {
+        if (dataList == null)
+        {
+            dataList = new List<#TableDataName#>();
+        }
+        if (dataDic == null)
+        {
+            dataDic = new Dictionary<int, #TableDataName#>();
+        }
+        dataList.Clear();
+        dataDic.Clear();
+        foreach (#TableDataName# item in list)
+        {
+            dataList.Add(item);
+            if (dataDic.ContainsKey(item.id))
+            {
+                Debug.LogError(string.Format("{0}表中Id{1}重复", "#TableDataName#", item.id));
+            }
+            else
+            {
+                dataDic.Add(item.id, item);
+            }
+        }
+    }
+
+    public List<#TableDataName#> GetAllData()
+    {
+        if (tempList == null)
+        {
+            tempList = new List<#TableDataName#>();
+        }
+        tempList.Clear();
+        tempList.AddRange(dataList);
+        return tempList;
+    }
+
+    public #TableDataName# GetDataByID(int id)
+    {
+        if (dataDic.ContainsKey(id))
+        {
+            return dataDic[id];
+        }
+        else
+        {
+            Debug.LogError(string.Format("{0}中数据表中不包含此ID{1}", "#TableDataName#", id));
+            return null;
+        }
+    }
+}

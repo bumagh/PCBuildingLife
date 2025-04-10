@@ -1,0 +1,4 @@
+    /// <summary>
+    /// {0}
+    /// </summary>
+    public {1} {2};

@@ -1,0 +1,65 @@
+﻿using System.Collections.Generic;
+using UnityEngine;
+
+public class #DataSetName# : ScriptableObject
+{
+    private List<#TableDataName#> tempList;
+    [SerializeField]
+    private List<#TableDataName#> dataList = new List<#TableDataName#>();
+    private Dictionary<int,#TableDataName#> dataDic = new Dictionary<int,#TableDataName#>();
+
+    public void SetData(object[] dataArray)
+    {
+        dataList.Clear();
+        foreach(var item in dataArray)
+        {
+            dataList.Add(item as #TableDataName#);
+        }
+    }
+
+    public List<#TableDataName#> GetAllData()
+    {
+        if(dataList.Count == 0)
+        {
+            Debug.LogError("#TableDataName#未导入Asset");
+        }
+        if (tempList == null)
+        {
+            tempList = new List<#TableDataName#>();
+        }
+        tempList.Clear();
+        tempList.AddRange(dataList);
+        return tempList;
+    }
+
+    public #TableDataName# GetDataByID(int id)
+    {
+        if (dataList.Count == 0)
+        {
+            Debug.LogError("#TableDataName#未导入Asset");
+        }
+        if (dataDic.Count == 0)
+        {
+            foreach (var item in dataList)
+            {
+                if (dataDic.ContainsKey(item.id))
+                {
+                    Debug.LogError(string.Format("{0}表中Id{1}重复", "#TableDataName#", item.id));
+                }
+                else
+                {
+                    dataDic.Add(item.id, item);
+                }
+            }
+        }
+        if (dataDic.ContainsKey(id))
+        {
+            return dataDic[id];
+        }
+        else
+        {
+            Debug.LogError(string.Format("{0}中数据表中不包含此ID{1}", "#TableDataName#", id));
+            return null;
+        }
+    }
+}

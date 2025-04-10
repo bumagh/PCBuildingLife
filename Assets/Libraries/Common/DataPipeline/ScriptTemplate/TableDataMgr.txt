@@ -1,0 +1,32 @@
+using System;
+using System.Collections.Generic;
+using UnityEngine;
+using Utf8Json;
+
+public static partial class TableDataMgr
+{{
+{0}
+
+    #region Private Field
+
+{1}
+    #endregion
+
+    #region Public Method
+
+    public static void LoadAllTableData()
+    {{
+{2}
+    }}
+
+    public static void UnloadAllTableData()
+    {{
+        
+    }}
+{3}
+    #endregion
+
+    #region Private Method
+{4}
+    #endregion
+}}

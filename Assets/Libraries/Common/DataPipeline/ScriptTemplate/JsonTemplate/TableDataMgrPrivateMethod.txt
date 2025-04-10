@@ -1,0 +1,18 @@
+﻿
+    private static void Check#TableDataName#()
+    {
+        if (#FieldName# == null)
+        {
+            if (Event_OnGetTableData != null)
+            {
+                byte[] content = Event_OnGetTableData("#DataSetName#");
+                List<#TableDataName#> list = JsonSerializer.Deserialize<List<#TableDataName#>>(content);
+                if (list == null || list.Count <= 0)
+                {
+                    Debug.LogError("Json返序列化#DataSetName#.Json文件不成功");
+                }
+                #FieldName# = new #DataSetName#();
+                #FieldName#.SetData(list);
+            }
+        }
+    }

@@ -1,0 +1,15 @@
+﻿
+    private static void Check#TableDataName#()
+    {
+        if (#FieldName# == null)
+        {
+            if (Event_OnGetTableData != null)
+            {
+                #FieldName# = Event_OnGetTableData("#DataSetName#") as #DataSetName#;
+            }
+            if (#FieldName# == null)
+            {
+                Debug.LogError("#DataSetName#不存在");
+            }
+        }
+    }

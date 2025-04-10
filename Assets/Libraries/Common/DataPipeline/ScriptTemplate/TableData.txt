@@ -1,0 +1,12 @@
+using System;
+using UnityEngine;
+using System.Collections.Generic;
+
+[Serializable]
+/// <summary>
+/// {0}
+/// </summary>
+public class {1}
+{{
+{2}
+}}

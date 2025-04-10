@@ -1,0 +1,1 @@
+    public static event Func<string, byte[]> Event_OnGetTableData;

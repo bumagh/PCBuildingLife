@@ -1,0 +1,12 @@
+
+    public static #TableDataName# GetSingle#TableDataName#(int id)
+    {
+        Check#TableDataName#();
+        return #FieldName#.GetDataByID(id);
+    }
+
+    public static List<#TableDataName#> GetAll#TableDataName#()
+    {
+        Check#TableDataName#();
+        return #FieldName#.GetAllData();
+    }
