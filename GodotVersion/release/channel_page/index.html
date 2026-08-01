@@ -1,0 +1,360 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>装机人生 / PC Building Life 0.1.0-dev</title>
+  <meta name="description" content="《装机人生》Windows 试玩候选版下载页。接单、采购、装机、开机、驱动、跑分、稳定性测试和订单交付。">
+  <style>
+    :root {
+      --ink: #07100f;
+      --panel: #101a18;
+      --panel-2: #17221f;
+      --line: #31433d;
+      --text: #ecf7ef;
+      --muted: #a9b8ae;
+      --cyan: #5ee0c2;
+      --yellow: #ffd76d;
+      --max: 1180px;
+    }
+    * { box-sizing: border-box; }
+    body {
+      margin: 0;
+      background: var(--ink);
+      color: var(--text);
+      font-family: "Microsoft YaHei UI", "Segoe UI", Arial, sans-serif;
+      line-height: 1.55;
+    }
+    a { color: inherit; }
+    .hero {
+      min-height: 92vh;
+      display: grid;
+      align-items: end;
+      position: relative;
+      overflow: hidden;
+      background: var(--ink);
+    }
+    .hero::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      background:
+        linear-gradient(90deg, rgba(7, 16, 15, 1) 0%, rgba(7, 16, 15, 0.98) 34%, rgba(7, 16, 15, 0.72) 62%, rgba(7, 16, 15, 0.18) 100%),
+        url("media/cover-1920x1080.png") 68% center / cover no-repeat;
+      transform: scale(1.01);
+    }
+    .hero-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      position: relative;
+      padding: 96px 0 48px;
+    }
+    .eyebrow {
+      display: inline-flex;
+      align-items: center;
+      gap: 10px;
+      color: var(--cyan);
+      font-size: 13px;
+      letter-spacing: 0;
+      text-transform: uppercase;
+      font-weight: 700;
+    }
+    .eyebrow::before {
+      content: "";
+      width: 34px;
+      height: 2px;
+      background: var(--cyan);
+    }
+    h1 {
+      margin: 18px 0 14px;
+      max-width: 720px;
+      font-family: "Microsoft JhengHei UI", "Microsoft YaHei UI", "Segoe UI", Arial, sans-serif;
+      font-size: clamp(42px, 6.4vw, 82px);
+      line-height: 1;
+      letter-spacing: 0;
+      font-weight: 900;
+    }
+    .subtitle {
+      max-width: 720px;
+      color: var(--muted);
+      font-size: 20px;
+      margin: 0 0 28px;
+    }
+    .hero-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 12px;
+      align-items: center;
+      margin: 0 0 30px;
+    }
+    .button {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 48px;
+      padding: 0 18px;
+      max-width: 100%;
+      border-radius: 6px;
+      border: 1px solid var(--cyan);
+      background: var(--cyan);
+      color: #06110f;
+      text-decoration: none;
+      font-weight: 800;
+    }
+    .button.secondary {
+      background: rgba(16, 26, 24, 0.72);
+      color: var(--text);
+      border-color: var(--line);
+    }
+    .button:focus-visible,
+    .notice a:focus-visible {
+      outline: 3px solid var(--yellow);
+      outline-offset: 3px;
+    }
+    .release-strip {
+      display: grid;
+      grid-template-columns: repeat(4, minmax(0, 1fr));
+      gap: 1px;
+      max-width: 920px;
+      border: 1px solid var(--line);
+      background: var(--line);
+      margin-top: 14px;
+    }
+    .release-strip div {
+      background: rgba(16, 26, 24, 0.88);
+      padding: 13px 14px;
+      min-width: 0;
+    }
+    .release-strip span {
+      display: block;
+      color: var(--muted);
+      font-size: 12px;
+    }
+    .release-strip strong {
+      display: block;
+      margin-top: 3px;
+      font-size: 15px;
+      overflow-wrap: anywhere;
+    }
+    .section {
+      border-top: 1px solid var(--line);
+      background: var(--ink);
+    }
+    .section-inner {
+      width: min(var(--max), calc(100% - 32px));
+      margin: 0 auto;
+      padding: 56px 0;
+    }
+    .section-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      align-items: end;
+      margin-bottom: 24px;
+    }
+    h2 {
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: 0;
+    }
+    .section-head p {
+      max-width: 520px;
+      color: var(--muted);
+      margin: 0;
+    }
+    .grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .item {
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel);
+      padding: 18px;
+    }
+    .item h3 {
+      margin: 0 0 8px;
+      font-size: 18px;
+    }
+    .item p {
+      margin: 0;
+      color: var(--muted);
+    }
+    .shot-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 14px;
+    }
+    .shot {
+      margin: 0;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      overflow: hidden;
+      background: var(--panel);
+    }
+    .shot img {
+      display: block;
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      object-fit: cover;
+    }
+    .shot figcaption {
+      padding: 10px 12px;
+      color: var(--muted);
+      font-size: 13px;
+    }
+    .copyline {
+      display: grid;
+      gap: 10px;
+      border: 1px solid var(--line);
+      border-radius: 6px;
+      background: var(--panel-2);
+      padding: 18px;
+    }
+    .copyline code {
+      display: block;
+      overflow-wrap: anywhere;
+      color: var(--yellow);
+      font-family: "Cascadia Mono", Consolas, monospace;
+      font-size: 13px;
+    }
+    .notice {
+      border-left: 4px solid var(--yellow);
+      background: rgba(255, 215, 109, 0.08);
+      padding: 16px 18px;
+      color: var(--muted);
+    }
+    footer {
+      border-top: 1px solid var(--line);
+      color: var(--muted);
+      padding: 28px 16px;
+      text-align: center;
+      font-size: 13px;
+    }
+    @media (max-width: 860px) {
+      .hero { min-height: 760px; }
+      .hero::before {
+        background:
+          linear-gradient(90deg, rgba(7, 16, 15, 1) 0%, rgba(7, 16, 15, 0.94) 58%, rgba(7, 16, 15, 0.4) 100%),
+          url("media/cover-1920x1080.png") 76% center / cover no-repeat;
+      }
+      .hero-inner {
+        width: min(var(--max), calc(100% - 32px));
+        padding: 86px 0 48px;
+      }
+      h1 {
+        font-size: 42px;
+        max-width: 358px;
+      }
+      .subtitle {
+        font-size: 18px;
+        max-width: 352px;
+      }
+      .hero-actions {
+        display: grid;
+        grid-template-columns: 1fr;
+        width: min(100%, 352px);
+      }
+      .button {
+        width: 100%;
+      }
+      .release-strip,
+      .grid,
+      .shot-grid { grid-template-columns: 1fr; }
+      .section-head { display: block; }
+      .section-head p { margin-top: 10px; }
+    }
+  </style>
+</head>
+<body>
+  <header class="hero">
+    <div class="hero-inner">
+      <div class="eyebrow">Windows 试玩候选版 · 0.1.0-dev</div>
+      <h1>装机人生<br>PC Building Life</h1>
+      <p class="subtitle">接单、采购、装机、开机、驱动、跑分、稳定性测试和交付评分。当前候选包已通过 12 单玩家流、首单审计和模拟下载包验收。</p>
+      <nav class="hero-actions" aria-label="下载与反馈">
+        <a class="button" href="package/PCBuildingLife-Windows-x64-0.1.0-dev.zip" download>下载 Windows ZIP</a>
+        <a class="button secondary" href="package/PCBuildingLife-Windows-x64-0.1.0-dev.zip.sha256" download>下载 SHA-256</a>
+        <a class="button secondary" href="https://github.com/bumagh/PCBuildingLife/issues">反馈问题</a>
+      </nav>
+      <div class="release-strip" aria-label="版本校验">
+        <div><span>平台</span><strong>Windows x86_64</strong></div>
+        <div><span>ZIP 大小</span><strong>38,367,359 bytes</strong></div>
+        <div><span>玩家流</span><strong>12 单通过</strong></div>
+        <div><span>首单审计</span><strong>社区办公机 99 / S</strong></div>
+      </div>
+    </div>
+  </header>
+  <main>
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2>下载前确认</h2>
+          <p>这是开发候选版，适合封闭测试、itch 草稿页或私域试玩。解压后直接运行，不需要联网登录。</p>
+        </div>
+        <div class="grid">
+          <article class="item"><h3>启动方法</h3><p>下载 ZIP，解压到本地普通目录，双击 PCBuildingLife.exe。第一次游玩选择“新游戏”。</p></article>
+          <article class="item"><h3>建议配置</h3><p>Windows 10 / 11 64 位，1280x720 或更高分辨率，支持 Vulkan 的显卡，至少 4 GB 可用内存。</p></article>
+          <article class="item"><h3>当前内容</h3><p>12 个首发订单，配件市场、仓库、拖拽安装、模拟 OS、软件任务、交付评分和存档恢复。</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2>校验值</h2>
+          <p>下载后可对照同目录的 .sha256 文件确认 ZIP 没有损坏。</p>
+        </div>
+        <div class="copyline">
+          <span>ZIP SHA-256</span>
+          <code>58aeba026b6a05d494296b5cd1c7b3a914f13147eac0e5872ee1a868d03803a1</code>
+          <span>EXE SHA-256</span>
+          <code>1630ae7a35d7995b2246d74ea2116245c017a45a974a38b188740281138fd204</code>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2>核心玩法</h2>
+          <p>游戏循环围绕客户订单展开，硬件选择和开机后的软件配置都会影响交付结果。</p>
+        </div>
+        <div class="grid">
+          <article class="item"><h3>订单驱动</h3><p>先看客户预算和性能要求，再决定配件采购和安装顺序。</p></article>
+          <article class="item"><h3>可视化工作台</h3><p>机箱槽位、完成度、兼容性、开机状态和下一步提示集中展示。</p></article>
+          <article class="item"><h3>模拟 OS</h3><p>Driver Tool、GPU 驱动、Benchmark 和 Stability Test 会进入订单评分。</p></article>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2>游戏截图</h2>
+          <p>截图来自当前 Godot 运行画面和图形验证脚本。</p>
+        </div>
+        <div class="shot-grid">
+          <figure class="shot"><img src="media/02-workbench.png" alt="工作台与装机槽位"><figcaption>工作台与装机槽位</figcaption></figure>
+          <figure class="shot"><img src="media/03-order-desk.png" alt="订单大厅"><figcaption>订单大厅</figcaption></figure>
+          <figure class="shot"><img src="media/04-catalog-shop.png" alt="配件市场"><figcaption>配件市场</figcaption></figure>
+          <figure class="shot"><img src="media/06-task-center.png" alt="任务中心"><figcaption>任务中心</figcaption></figure>
+          <figure class="shot"><img src="media/07-system-center.png" alt="系统中心"><figcaption>系统中心</figcaption></figure>
+          <figure class="shot"><img src="media/09-delivery-feedback.png" alt="交付评分回执"><figcaption>交付评分回执</figcaption></figure>
+        </div>
+      </div>
+    </section>
+    <section class="section">
+      <div class="section-inner">
+        <div class="section-head">
+          <h2>隐私与反馈</h2>
+          <p>当前版本是本地单机试玩候选版，不接入账号、广告、支付、统计、云存档或自动崩溃上报。</p>
+        </div>
+        <div class="notice">
+          反馈问题请提交到 <a href="https://github.com/bumagh/PCBuildingLife/issues">GitHub Issues</a>。建议包含游戏版本、Windows 版本、分辨率/全屏状态、复现步骤、预期结果、实际结果，以及截图或录屏。
+        </div>
+      </div>
+    </section>
+  </main>
+  <footer>PC Building Life / 装机人生 · Copyright (c) 2026 AKG Studio · Built with Godot Engine</footer>
+</body>
+</html>

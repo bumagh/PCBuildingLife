@@ -1,0 +1,78 @@
+name: PC Building Life 玩家反馈 / Bug Report
+description: 反馈《装机人生》试玩候选版的问题、卡点或体验建议。
+title: "[PCBL 0.1.0-dev] "
+labels: ["feedback", "pc-building-life"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        感谢试玩《装机人生》。请尽量补充复现步骤、截图和系统信息，这会直接帮助我们定位装机流程、模拟 OS、订单评分和存档问题。
+  - type: input
+    id: build_version
+    attributes:
+      label: 游戏版本
+      description: 可在主菜单或发布包文件名中查看。
+      placeholder: "0.1.0-dev"
+    validations:
+      required: true
+  - type: dropdown
+    id: issue_type
+    attributes:
+      label: 反馈类型
+      options:
+        - 启动/崩溃
+        - UI 显示/分辨率
+        - 新手引导/任务中心
+        - 订单/评分/奖励
+        - 商店/仓库/拖拽安装
+        - 模拟 OS/驱动/跑分/稳定性测试
+        - 存档/读档
+        - 体验建议
+        - 其他
+    validations:
+      required: true
+  - type: textarea
+    id: summary
+    attributes:
+      label: 问题概述
+      description: 一两句话说明你遇到了什么。
+      placeholder: "例如：完成 Driver Tool 后交付按钮仍提示软件未完成。"
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: 复现步骤
+      description: 请按顺序写出你做了哪些操作。
+      placeholder: |
+        1. 新游戏进入第一单
+        2. 购买并安装配件
+        3. 打开 Max Monitor
+        4. 点击 Driver Tool
+        5. ...
+    validations:
+      required: true
+  - type: textarea
+    id: expected_actual
+    attributes:
+      label: 预期结果与实际结果
+      placeholder: |
+        预期：
+        实际：
+    validations:
+      required: true
+  - type: input
+    id: windows_version
+    attributes:
+      label: Windows 版本
+      placeholder: "Windows 10 22H2 / Windows 11 23H2"
+  - type: input
+    id: resolution
+    attributes:
+      label: 分辨率与显示模式
+      placeholder: "1280x720 窗口 / 1920x1080 全屏 / 高 DPI 缩放 150%"
+  - type: textarea
+    id: attachments
+    attributes:
+      label: 截图、录屏或补充信息
+      description: 可以拖入截图、录屏，或说明是否有存档异常、是否从 ZIP 解压后直接运行。

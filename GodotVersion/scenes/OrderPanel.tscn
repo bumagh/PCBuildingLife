@@ -1,0 +1,6 @@
+[gd_scene load_steps=2 format=3 uid="uid://pcbl_order_panel"]
+
+[ext_resource type="Script" path="res://scripts/order_panel.gd" id="1_order_panel"]
+
+[node name="OrderPanel" type="PanelContainer"]
+script = ExtResource("1_order_panel")

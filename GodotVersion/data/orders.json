@@ -1,0 +1,134 @@
+[
+	{
+		"id": "community_office",
+		"name": "社区办公机",
+		"customer": "附近工作室",
+		"customer_type": "社区客户",
+		"reward": 6500,
+		"difficulty": 1,
+		"unlock_after": 0,
+		"software_tasks": ["drivers"],
+		"requirements": {"Case": 60, "Power": 60, "MotherBoard": 60, "CPU": 60, "RAM": 60, "SSD": 55}
+	},
+	{
+		"id": "student_gaming",
+		"name": "学生游戏机",
+		"customer": "大学电竞社",
+		"customer_type": "社区客户",
+		"reward": 8000,
+		"difficulty": 1,
+		"unlock_after": 0,
+		"software_tasks": ["drivers", "benchmark"],
+		"requirements": {"Case": 65, "Power": 65, "MotherBoard": 65, "CPU": 65, "VideoCard": 65, "RAM": 65, "SSD": 60}
+	},
+	{
+		"id": "photo_archive",
+		"name": "摄影归档机",
+		"customer": "独立摄影师",
+		"customer_type": "创作者",
+		"reward": 7500,
+		"difficulty": 1,
+		"unlock_after": 0,
+		"software_tasks": ["drivers"],
+		"requirements": {"Case": 65, "Power": 65, "MotherBoard": 65, "CPU": 65, "RAM": 70, "SSD": 70, "HDD": 60}
+	},
+	{
+		"id": "streaming_rig",
+		"name": "直播推流机",
+		"customer": "新人主播",
+		"customer_type": "创作者",
+		"reward": 11500,
+		"difficulty": 2,
+		"unlock_after": 1,
+		"software_tasks": ["drivers", "gpu_driver"],
+		"requirements": {"Case": 75, "Power": 75, "MotherBoard": 75, "CPU": 75, "VideoCard": 75, "RAM": 75, "M2": 70, "COOLER": 70}
+	},
+	{
+		"id": "design_station",
+		"name": "平面设计工作站",
+		"customer": "品牌设计事务所",
+		"customer_type": "专业客户",
+		"reward": 14000,
+		"difficulty": 2,
+		"unlock_after": 2,
+		"software_tasks": ["drivers", "benchmark"],
+		"requirements": {"Case": 75, "Power": 75, "MotherBoard": 78, "CPU": 78, "VideoCard": 70, "RAM": 80, "SSD": 78, "M2": 75}
+	},
+	{
+		"id": "silent_audio",
+		"name": "静音音频工作站",
+		"customer": "播客录音棚",
+		"customer_type": "专业客户",
+		"reward": 13000,
+		"difficulty": 2,
+		"unlock_after": 3,
+		"software_tasks": ["drivers", "stability"],
+		"requirements": {"Case": 80, "Power": 80, "MotherBoard": 75, "CPU": 78, "RAM": 80, "SSD": 75, "COOLER": 78}
+	},
+	{
+		"id": "esports_training",
+		"name": "电竞训练机",
+		"customer": "城市青训队",
+		"customer_type": "电竞客户",
+		"reward": 18000,
+		"difficulty": 3,
+		"unlock_after": 4,
+		"software_tasks": ["drivers", "gpu_driver", "benchmark"],
+		"requirements": {"Case": 82, "Power": 82, "MotherBoard": 82, "CPU": 85, "VideoCard": 85, "RAM": 82, "M2": 82, "COOLER": 82}
+	},
+	{
+		"id": "animation_render",
+		"name": "动画渲染工作站",
+		"customer": "小型动画团队",
+		"customer_type": "企业客户",
+		"reward": 21000,
+		"difficulty": 3,
+		"unlock_after": 5,
+		"software_tasks": ["drivers", "benchmark", "stability"],
+		"requirements": {"Case": 85, "Power": 85, "MotherBoard": 85, "CPU": 88, "VideoCard": 88, "RAM": 88, "SSD": 85, "M2": 85, "COOLER": 85}
+	},
+	{
+		"id": "medical_imaging",
+		"name": "医学影像终端",
+		"customer": "社区影像中心",
+		"customer_type": "企业客户",
+		"reward": 24000,
+		"difficulty": 3,
+		"unlock_after": 6,
+		"software_tasks": ["drivers", "gpu_driver", "stability"],
+		"requirements": {"Case": 88, "Power": 88, "MotherBoard": 88, "CPU": 88, "VideoCard": 85, "RAM": 90, "SSD": 88, "M2": 88, "COOLER": 88}
+	},
+	{
+		"id": "vr_demo",
+		"name": "VR 展示主机",
+		"customer": "科技展览公司",
+		"customer_type": "企业客户",
+		"reward": 28000,
+		"difficulty": 4,
+		"unlock_after": 7,
+		"software_tasks": ["drivers", "gpu_driver", "benchmark"],
+		"requirements": {"Case": 90, "Power": 90, "MotherBoard": 90, "CPU": 90, "VideoCard": 92, "RAM": 90, "SSD": 88, "M2": 90, "COOLER": 90}
+	},
+	{
+		"id": "ai_lab",
+		"name": "本地 AI 实验机",
+		"customer": "高校算法实验室",
+		"customer_type": "科研客户",
+		"reward": 32000,
+		"difficulty": 4,
+		"unlock_after": 8,
+		"software_tasks": ["drivers", "benchmark", "stability"],
+		"requirements": {"Case": 92, "Power": 92, "MotherBoard": 92, "CPU": 92, "VideoCard": 95, "RAM": 95, "SSD": 90, "M2": 92, "COOLER": 92}
+	},
+	{
+		"id": "championship_stage",
+		"name": "冠军赛舞台主机",
+		"customer": "全国赛事执行组",
+		"customer_type": "旗舰客户",
+		"reward": 38000,
+		"difficulty": 5,
+		"unlock_after": 9,
+		"software_tasks": ["drivers", "gpu_driver", "benchmark", "stability"],
+		"requirements": {"Case": 95, "Power": 95, "MotherBoard": 95, "CPU": 95, "VideoCard": 95, "RAM": 95, "SSD": 92, "M2": 95, "COOLER": 95}
+	}
+]

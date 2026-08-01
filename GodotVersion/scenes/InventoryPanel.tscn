@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://pcbl_inventory_panel"]
+
+[ext_resource type="Script" path="res://scripts/inventory_panel.gd" id="1_inventory_panel"]
+
+[node name="InventoryPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(390, 0)
+script = ExtResource("1_inventory_panel")

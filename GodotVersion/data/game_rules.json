@@ -1,0 +1,22 @@
+{
+	"starting_money": 20000,
+	"required_slots": [
+		"Case",
+		"Power",
+		"MotherBoard",
+		"CPU",
+		"VideoCard",
+		"RAM",
+		"SSD",
+		"M2",
+		"COOLER"
+	],
+	"sell_ratio": 0.55,
+	"scoring": {
+		"performance_weight": 0.4,
+		"budget_weight": 0.2,
+		"compatibility_weight": 0.15,
+		"boot_weight": 0.1,
+		"software_weight": 0.15
+	}
+}

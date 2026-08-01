@@ -1,0 +1,8 @@
+{
+  "itch_target": "<itch-user>/<itch-game>",
+  "channel": "windows-demo",
+  "hidden": true,
+  "if_changed": true,
+  "public_package_url": "",
+  "public_sha256_url": ""
+}

@@ -1,0 +1,7 @@
+[gd_scene load_steps=2 format=3 uid="uid://pcbl_shop_panel"]
+
+[ext_resource type="Script" path="res://scripts/shop_panel.gd" id="1_shop_panel"]
+
+[node name="ShopPanel" type="PanelContainer"]
+custom_minimum_size = Vector2(430, 0)
+script = ExtResource("1_shop_panel")
