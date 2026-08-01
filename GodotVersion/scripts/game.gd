@@ -6,6 +6,22 @@ const BUILDING_PANEL_SCENE := preload("res://scenes/BuildingPanel.tscn")
 const INVENTORY_PANEL_SCENE := preload("res://scenes/InventoryPanel.tscn")
 const ORDER_PANEL_SCENE := preload("res://scenes/OrderPanel.tscn")
 const SHOP_PANEL_SCENE := preload("res://scenes/ShopPanel.tscn")
+const UI_ICON_TEXTURES := {
+	"workbench": preload("res://assets/ui/icons/workbench.svg"),
+	"orders": preload("res://assets/ui/icons/orders.svg"),
+	"shop": preload("res://assets/ui/icons/shop.svg"),
+	"inventory": preload("res://assets/ui/icons/inventory.svg"),
+	"tasks": preload("res://assets/ui/icons/tasks.svg"),
+	"power": preload("res://assets/ui/icons/power.svg"),
+	"monitor": preload("res://assets/ui/icons/monitor.svg"),
+	"check": preload("res://assets/ui/icons/check.svg"),
+	"delivery": preload("res://assets/ui/icons/delivery.svg"),
+	"save": preload("res://assets/ui/icons/save.svg"),
+	"load": preload("res://assets/ui/icons/load.svg"),
+	"restart": preload("res://assets/ui/icons/restart.svg"),
+	"system": preload("res://assets/ui/icons/system.svg"),
+	"close": preload("res://assets/ui/icons/close.svg"),
+}
 const STARTING_MONEY := 20000
 const SAVE_PATH := "user://save_game.json"
 const ORDERS_PATH := "res://data/orders.json"
@@ -432,6 +448,7 @@ func _build_ui() -> void:
 	footer_box.add_child(footer_actions)
 
 	var footer_order_button := Button.new()
+	footer_order_button.name = "FooterOrderButton"
 	footer_order_button.text = "订单大厅"
 	footer_order_button.custom_minimum_size = Vector2(0, 20)
 	footer_order_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -440,6 +457,7 @@ func _build_ui() -> void:
 	footer_actions.add_child(footer_order_button)
 
 	var footer_finish_button := Button.new()
+	footer_finish_button.name = "FooterFinishButton"
 	footer_finish_button.text = "完成检测"
 	footer_finish_button.custom_minimum_size = Vector2(0, 20)
 	footer_finish_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -448,6 +466,7 @@ func _build_ui() -> void:
 	footer_actions.add_child(footer_finish_button)
 
 	var footer_power_button := Button.new()
+	footer_power_button.name = "FooterPowerButton"
 	footer_power_button.text = "电源按钮"
 	footer_power_button.custom_minimum_size = Vector2(0, 20)
 	footer_power_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -538,7 +557,7 @@ func _build_ui() -> void:
 	dock_row.add_theme_constant_override("separation", 12)
 	home_bottom_dock.add_child(dock_row)
 
-	var flow_card := _make_home_dock_card(dock_row, "工作流", Color(0.32, 0.92, 0.92), 0.90)
+	var flow_card := _make_home_dock_card(dock_row, "工作流", Color(0.32, 0.92, 0.92), 0.90, "workbench")
 
 	var flow_body := HBoxContainer.new()
 	flow_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
@@ -614,7 +633,7 @@ func _build_ui() -> void:
 	home_task_center_button.pressed.connect(open_task_center_overlay)
 	flow_actions.add_child(home_task_center_button)
 
-	var order_card := _make_home_dock_card(dock_row, "订单", Color(1.0, 0.72, 0.28), 1.18)
+	var order_card := _make_home_dock_card(dock_row, "订单", Color(1.0, 0.72, 0.28), 1.18, "orders")
 
 	order_label = Label.new()
 	order_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -672,7 +691,7 @@ func _build_ui() -> void:
 	home_deliver_order_button.pressed.connect(_on_deliver_pressed)
 	order_actions.add_child(home_deliver_order_button)
 
-	var system_card := _make_home_dock_card(dock_row, "系统", Color(0.36, 1.0, 0.66), 1.12)
+	var system_card := _make_home_dock_card(dock_row, "系统", Color(0.36, 1.0, 0.66), 1.12, "system")
 
 	os_label = Label.new()
 	os_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -843,7 +862,7 @@ func _build_catalog_workspace_panel(parent: Container) -> void:
 
 	catalog_workspace_inventory_chip_label = _add_home_dock_chip(info_box, "仓库 0 件", Color(0.36, 1.0, 0.66))
 
-func _make_home_dock_card(parent: Container, title_text: String, accent: Color, ratio: float) -> VBoxContainer:
+func _make_home_dock_card(parent: Container, title_text: String, accent: Color, ratio: float, icon_key: String = "") -> VBoxContainer:
 	var panel := PanelContainer.new()
 	panel.name = "%sCard" % title_text
 	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
@@ -857,15 +876,34 @@ func _make_home_dock_card(parent: Container, title_text: String, accent: Color, 
 	box.add_theme_constant_override("separation", 5)
 	panel.add_child(box)
 
+	var title_row := HBoxContainer.new()
+	title_row.add_theme_constant_override("separation", 6)
+	box.add_child(title_row)
+	if icon_key != "":
+		title_row.add_child(_make_ui_icon(icon_key, Vector2(22, 22), accent))
+
 	var title := Label.new()
 	title.text = title_text
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	title.clip_text = true
 	title.max_lines_visible = 1
 	title.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	title.add_theme_font_size_override("font_size", 17)
 	title.add_theme_color_override("font_color", Color(accent.r, accent.g, accent.b, 1.0))
-	box.add_child(title)
+	title_row.add_child(title)
 	return box
+
+func _make_ui_icon(icon_key: String, size: Vector2, tint: Color = Color.WHITE) -> TextureRect:
+	var icon := TextureRect.new()
+	var texture = UI_ICON_TEXTURES.get(icon_key, null)
+	if texture is Texture2D:
+		icon.texture = texture
+	icon.custom_minimum_size = size
+	icon.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	icon.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	icon.modulate = tint
+	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return icon
 
 func _add_home_dock_chip(parent: Container, text: String, accent: Color) -> Label:
 	var panel := PanelContainer.new()
@@ -2349,6 +2387,7 @@ func _style_catalog_entry_button(button: Button, accent: Color) -> void:
 	button.add_theme_stylebox_override("hover", _catalog_stylebox(Color(0.04, 0.08, 0.11, 0.96), accent.lightened(0.14), 8, 8))
 	button.add_theme_stylebox_override("pressed", _catalog_stylebox(Color(0.08, 0.10, 0.07, 0.98), Color(1.0, 0.72, 0.28), 8, 8))
 	button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
+	_apply_button_icon(button, _button_icon_key(button), 18)
 
 func _style_home_dock_button(button: Button, accent: Color) -> void:
 	button.add_theme_stylebox_override("normal", _catalog_stylebox(Color(0.024, 0.034, 0.078, 0.94), accent, 6, 3))
@@ -2356,6 +2395,7 @@ func _style_home_dock_button(button: Button, accent: Color) -> void:
 	button.add_theme_stylebox_override("pressed", _catalog_stylebox(Color(0.08, 0.10, 0.07, 0.98), Color(1.0, 0.72, 0.28), 6, 3))
 	button.add_theme_font_size_override("font_size", 11)
 	button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
+	_apply_button_icon(button, _button_icon_key(button), 16)
 
 func _style_catalog_mode_button(button: Button, accent: Color, active: bool) -> void:
 	var bg := Color(accent.r * 0.16, accent.g * 0.16, accent.b * 0.16, 0.98) if active else Color(0.020, 0.028, 0.062, 0.96)
@@ -2364,6 +2404,40 @@ func _style_catalog_mode_button(button: Button, accent: Color, active: bool) -> 
 	button.add_theme_stylebox_override("hover", _catalog_stylebox(bg.lightened(0.08), accent.lightened(0.12), 8, 8))
 	button.add_theme_stylebox_override("pressed", _catalog_stylebox(Color(0.08, 0.10, 0.07, 0.98), Color(1.0, 0.72, 0.28), 8, 8))
 	button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0) if active else Color(0.78, 0.86, 0.94))
+	_apply_button_icon(button, _button_icon_key(button), 18)
+
+func _button_icon_key(button: Button) -> String:
+	match button.name:
+		"OpenTaskCenterButton", "HomeTaskCenterButton", "OrderDeskTaskCenterButton", "TaskCenterNextButton", "TutorialActionButton":
+			return "tasks"
+		"OpenShopCatalogButton", "CatalogWorkspaceShopButton", "CatalogShopModeButton":
+			return "shop"
+		"OpenInventoryCatalogButton", "CatalogWorkspaceInventoryButton", "CatalogInventoryModeButton":
+			return "inventory"
+		"FooterOrderButton", "HomeOrderDeskButton":
+			return "orders"
+		"FooterFinishButton":
+			return "check"
+		"FooterPowerButton":
+			return "power"
+		"HomeDeliverOrderButton":
+			return "delivery"
+		"HomeSystemCenterButton":
+			return "system"
+		"HomeSystemMonitorButton", "OpenMonitorButton":
+			return "monitor"
+		"TaskCenterCloseButton", "SystemCenterCloseButton", "CatalogCloseButton", "MonitorCloseButton", "OrderDeskCloseButton":
+			return "close"
+	return ""
+
+func _apply_button_icon(button: Button, icon_key: String, max_width: int) -> void:
+	if icon_key == "":
+		return
+	var texture = UI_ICON_TEXTURES.get(icon_key, null)
+	if texture is Texture2D:
+		button.icon = texture
+		button.expand_icon = true
+		button.add_theme_constant_override("h_separation", 5)
 
 func _catalog_stylebox(color: Color, border_color: Color, radius: int, margin: int) -> StyleBoxFlat:
 	var box := _stylebox(color, border_color, radius)

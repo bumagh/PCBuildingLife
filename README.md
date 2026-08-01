@@ -74,8 +74,8 @@ UI 截图验证覆盖 1280x720、1366x768 和 1920x1080。截图会检查首页�
 ## 当前候选包证据
 
 - 版本：`0.1.0-dev`
-- Windows ZIP SHA-256：`05c8a34a8072ef229c161802ecd82cb9a1bcf8d38e6ff561b3d7e1e1acc88c76`
-- Windows EXE SHA-256：`03f6c149ef72e04f0e7d632ad52e28fcf51545c7f8938bf6441cd111123cbdf9`
+- Windows ZIP SHA-256：`dc5a2cec06e35799c8535886f0dd76897f36645e866467defcc2f0e28dd9b73d`
+- Windows EXE SHA-256：`d72e724a2c635c17ffeb74cd578a21e7b45812565d5b8da487c6ee8a4ec8b0ef`
 - 本机视觉套件：`warnings=0`
 - MCP UI smoke：到达“交付订单”
 
