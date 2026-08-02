@@ -22,6 +22,19 @@ const UI_ICON_TEXTURES := {
 	"system": preload("res://assets/ui/icons/system.svg"),
 	"close": preload("res://assets/ui/icons/close.svg"),
 }
+const UI_ART_TEXTURES := {
+	"app_cpu": preload("res://assets/ui/art/app_cpu.svg"),
+	"app_gpu": preload("res://assets/ui/art/app_gpu.svg"),
+	"app_driver": preload("res://assets/ui/art/app_driver.svg"),
+	"app_files": preload("res://assets/ui/art/app_files.svg"),
+	"app_benchmark": preload("res://assets/ui/art/app_benchmark.svg"),
+	"customer_office": preload("res://assets/ui/art/customer_office.svg"),
+	"customer_creator": preload("res://assets/ui/art/customer_creator.svg"),
+	"customer_gamer": preload("res://assets/ui/art/customer_gamer.svg"),
+	"badge_bronze": preload("res://assets/ui/art/badge_bronze.svg"),
+	"badge_silver": preload("res://assets/ui/art/badge_silver.svg"),
+	"badge_gold": preload("res://assets/ui/art/badge_gold.svg"),
+}
 const STARTING_MONEY := 20000
 const SAVE_PATH := "user://save_game.json"
 const ORDERS_PATH := "res://data/orders.json"
@@ -199,6 +212,7 @@ var home_bottom_dock: PanelContainer
 var home_task_center_button: Button
 var home_order_desk_button: Button
 var home_deliver_order_button: Button
+var home_workbench_tab_button: Button
 var order_desk_overlay: ColorRect
 var order_desk_list: ItemList
 var order_desk_progress_label: Label
@@ -220,6 +234,9 @@ var order_desk_risk_label: Label
 var order_desk_score_label: Label
 var order_desk_unlock_label: Label
 var order_desk_action_hint_label: Label
+var order_desk_customer_art: TextureRect
+var order_desk_grade_art: TextureRect
+var order_desk_software_art: TextureRect
 var order_desk_accept_button: Button
 var order_desk_deliver_button: Button
 var order_desk_task_button: Button
@@ -339,12 +356,14 @@ func _build_ui() -> void:
 	top_bar.add_child(money_label)
 
 	var finish_button := Button.new()
+	finish_button.name = "FinishCheckButton"
 	finish_button.text = "完成检测"
 	_style_top_button(finish_button)
 	finish_button.pressed.connect(_on_finish_pressed)
 	top_bar.add_child(finish_button)
 
 	var power_button := Button.new()
+	power_button.name = "PowerButton"
 	power_button.text = "电源按钮"
 	_style_top_button(power_button)
 	power_button.pressed.connect(_on_power_button_pressed)
@@ -358,25 +377,38 @@ func _build_ui() -> void:
 	top_bar.add_child(open_monitor_button)
 
 	var deliver_button := Button.new()
+	deliver_button.name = "TopDeliverButton"
 	deliver_button.text = "交付订单"
 	_style_top_button(deliver_button)
 	deliver_button.pressed.connect(_on_deliver_pressed)
 	top_bar.add_child(deliver_button)
 
 	var save_button := Button.new()
+	save_button.name = "SaveButton"
 	save_button.text = "保存"
+	save_button.tooltip_text = "保存当前进度"
+	save_button.custom_minimum_size = Vector2(42, 38)
+	save_button.text = ""
 	_style_top_button(save_button)
 	save_button.pressed.connect(_on_save_pressed)
 	top_bar.add_child(save_button)
 
 	var load_button := Button.new()
+	load_button.name = "LoadButton"
 	load_button.text = "读取"
+	load_button.tooltip_text = "读取最近一次保存"
+	load_button.custom_minimum_size = Vector2(42, 38)
+	load_button.text = ""
 	_style_top_button(load_button)
 	load_button.pressed.connect(_on_load_pressed)
 	top_bar.add_child(load_button)
 
 	var reset_button := Button.new()
+	reset_button.name = "RestartButton"
 	reset_button.text = "重开"
+	reset_button.tooltip_text = "重置当前装机进度"
+	reset_button.custom_minimum_size = Vector2(42, 38)
+	reset_button.text = ""
 	_style_top_button(reset_button)
 	reset_button.pressed.connect(_on_reset_pressed)
 	top_bar.add_child(reset_button)
@@ -549,106 +581,161 @@ func _build_ui() -> void:
 
 	home_bottom_dock = PanelContainer.new()
 	home_bottom_dock.name = "HomeBottomDock"
-	home_bottom_dock.custom_minimum_size = Vector2(0, 190)
+	home_bottom_dock.custom_minimum_size = Vector2(0, 174)
 	home_bottom_dock.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	home_bottom_dock.add_theme_stylebox_override("panel", _stylebox(Color(0.010, 0.018, 0.052, 0.96), Color(0.28, 0.58, 1.0, 0.86), 8))
 
-	var dock_row := HBoxContainer.new()
-	dock_row.add_theme_constant_override("separation", 12)
-	home_bottom_dock.add_child(dock_row)
+	var dock_shell := VBoxContainer.new()
+	dock_shell.add_theme_constant_override("separation", 6)
+	home_bottom_dock.add_child(dock_shell)
 
-	var flow_card := _make_home_dock_card(dock_row, "工作流", Color(0.32, 0.92, 0.92), 0.90, "workbench")
+	var dock_nav := HBoxContainer.new()
+	dock_nav.add_theme_constant_override("separation", 6)
+	dock_shell.add_child(dock_nav)
 
-	var flow_body := HBoxContainer.new()
-	flow_body.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	flow_body.add_theme_constant_override("separation", 10)
-	flow_card.add_child(flow_body)
+	home_workbench_tab_button = Button.new()
+	home_workbench_tab_button.name = "HomeWorkbenchTabButton"
+	home_workbench_tab_button.text = "装机台"
+	home_workbench_tab_button.tooltip_text = "回到当前装机工作台"
+	home_workbench_tab_button.custom_minimum_size = Vector2(126, 38)
+	_style_home_dock_tab(home_workbench_tab_button, Color(0.32, 0.92, 0.92), true)
+	home_workbench_tab_button.pressed.connect(_on_home_workbench_pressed)
+	dock_nav.add_child(home_workbench_tab_button)
 
-	var flow_left := VBoxContainer.new()
-	flow_left.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	flow_left.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	flow_left.size_flags_stretch_ratio = 1.15
-	flow_left.add_theme_constant_override("separation", 5)
-	flow_body.add_child(flow_left)
+	home_order_desk_button = Button.new()
+	home_order_desk_button.name = "HomeOrderDeskButton"
+	home_order_desk_button.text = "订单大厅"
+	home_order_desk_button.tooltip_text = "查看客户订单、奖励和交付要求"
+	home_order_desk_button.custom_minimum_size = Vector2(126, 38)
+	_style_home_dock_tab(home_order_desk_button, Color(1.0, 0.72, 0.28), false)
+	home_order_desk_button.pressed.connect(open_order_desk)
+	dock_nav.add_child(home_order_desk_button)
 
-	var flow_feedback := VBoxContainer.new()
-	flow_feedback.custom_minimum_size = Vector2(160, 0)
-	flow_feedback.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	flow_feedback.size_flags_vertical = Control.SIZE_EXPAND_FILL
-	flow_feedback.size_flags_stretch_ratio = 0.85
-	flow_feedback.add_theme_constant_override("separation", 5)
-	flow_body.add_child(flow_feedback)
+	home_system_center_button = Button.new()
+	home_system_center_button.name = "HomeSystemCenterButton"
+	home_system_center_button.text = "系统中心"
+	home_system_center_button.tooltip_text = "打开模拟系统、驱动和跑分工具"
+	home_system_center_button.custom_minimum_size = Vector2(126, 38)
+	_style_home_dock_tab(home_system_center_button, Color(0.36, 1.0, 0.66), false)
+	home_system_center_button.pressed.connect(open_system_center_overlay)
+	dock_nav.add_child(home_system_center_button)
 
-	flow_left.add_child(status_label)
+	status_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	status_label.custom_minimum_size = Vector2(180, 38)
+	dock_nav.add_child(status_label)
 
-	var tutorial_header := HBoxContainer.new()
-	tutorial_header.add_theme_constant_override("separation", 10)
-	flow_left.add_child(tutorial_header)
+	var context_row := HBoxContainer.new()
+	context_row.add_theme_constant_override("separation", 8)
+	context_row.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	dock_shell.add_child(context_row)
 
+	var flow_context := _make_home_context_panel(context_row, "工作流", Color(0.32, 0.92, 0.92), 1.12, "workbench")
+	var tutorial_row := HBoxContainer.new()
+	tutorial_row.add_theme_constant_override("separation", 8)
+	flow_context.add_child(tutorial_row)
+	var tutorial_copy := VBoxContainer.new()
+	tutorial_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	tutorial_copy.add_theme_constant_override("separation", 2)
+	tutorial_row.add_child(tutorial_copy)
 	tutorial_progress_label = Label.new()
-	tutorial_progress_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	tutorial_progress_label.add_theme_font_size_override("font_size", 14)
+	tutorial_progress_label.add_theme_font_size_override("font_size", 12)
 	tutorial_progress_label.add_theme_color_override("font_color", Color(0.32, 0.92, 0.92))
-	tutorial_header.add_child(tutorial_progress_label)
-
-	tutorial_action_button = Button.new()
-	tutorial_action_button.name = "TutorialActionButton"
-	tutorial_action_button.custom_minimum_size = Vector2(108, 28)
-	_style_home_dock_button(tutorial_action_button, Color(0.32, 0.92, 0.92))
-	tutorial_action_button.pressed.connect(_on_tutorial_action_pressed)
-	tutorial_header.add_child(tutorial_action_button)
-
+	tutorial_copy.add_child(tutorial_progress_label)
 	tutorial_label = Label.new()
 	tutorial_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	tutorial_label.max_lines_visible = 1
 	tutorial_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	tutorial_label.clip_text = true
-	tutorial_label.custom_minimum_size = Vector2(0, 18)
-	tutorial_label.add_theme_font_size_override("font_size", 12)
-	flow_left.add_child(tutorial_label)
-
+	tutorial_label.add_theme_font_size_override("font_size", 11)
+	tutorial_label.add_theme_color_override("font_color", Color(0.84, 0.90, 0.98))
+	tutorial_copy.add_child(tutorial_label)
 	progression_label = Label.new()
 	progression_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	progression_label.max_lines_visible = 1
 	progression_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
 	progression_label.clip_text = true
-	progression_label.custom_minimum_size = Vector2(0, 18)
-	progression_label.add_theme_font_size_override("font_size", 12)
-	progression_label.add_theme_color_override("font_color", Color(0.72, 0.78, 0.9))
-	flow_left.add_child(progression_label)
+	progression_label.add_theme_font_size_override("font_size", 10)
+	progression_label.add_theme_color_override("font_color", Color(0.68, 0.78, 0.9))
+	tutorial_copy.add_child(progression_label)
+	tutorial_action_button = Button.new()
+	tutorial_action_button.name = "TutorialActionButton"
+	tutorial_action_button.custom_minimum_size = Vector2(116, 34)
+	_style_home_dock_button(tutorial_action_button, Color(0.32, 0.92, 0.92))
+	tutorial_action_button.pressed.connect(_on_tutorial_action_pressed)
+	tutorial_row.add_child(tutorial_action_button)
 
-	_build_action_feedback_panel(flow_feedback)
-	_build_delivery_feedback_panel(flow_feedback)
-
-	var flow_actions := HBoxContainer.new()
-	flow_actions.add_theme_constant_override("separation", 8)
-	flow_left.add_child(flow_actions)
-
-	home_task_center_button = Button.new()
-	home_task_center_button.name = "HomeTaskCenterButton"
-	home_task_center_button.text = "任务中心"
-	home_task_center_button.custom_minimum_size = Vector2(0, 24)
-	home_task_center_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_style_home_dock_button(home_task_center_button, Color(1.0, 0.72, 0.28))
-	home_task_center_button.pressed.connect(open_task_center_overlay)
-	flow_actions.add_child(home_task_center_button)
-
-	var order_card := _make_home_dock_card(dock_row, "订单", Color(1.0, 0.72, 0.28), 1.18, "orders")
-
+	var order_context := _make_home_context_panel(context_row, "订单状态", Color(1.0, 0.72, 0.28), 1.05, "orders")
 	order_label = Label.new()
 	order_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
 	order_label.max_lines_visible = 1
 	order_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	order_label.custom_minimum_size = Vector2(0, 26)
-	order_label.add_theme_font_size_override("font_size", 13)
-	order_card.add_child(order_label)
-
+	order_label.clip_text = true
+	order_label.add_theme_font_size_override("font_size", 12)
+	order_context.add_child(order_label)
 	var order_status_row := HBoxContainer.new()
 	order_status_row.add_theme_constant_override("separation", 6)
-	order_card.add_child(order_status_row)
-
+	order_context.add_child(order_status_row)
 	order_state_chip_label = _add_home_dock_chip(order_status_row, "暂无订单", Color(0.24, 0.78, 0.92))
-	order_progress_bar = _add_home_dock_progress_bar(order_card, Color(1.0, 0.72, 0.28))
+	score_label = Label.new()
+	score_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	score_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
+	score_label.add_theme_font_size_override("font_size", 11)
+	score_label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.82))
+	order_status_row.add_child(score_label)
+	order_progress_bar = _add_home_dock_progress_bar(order_context, Color(1.0, 0.72, 0.28))
+
+	var system_context := _make_home_context_panel(context_row, "系统状态", Color(0.36, 1.0, 0.66), 0.92, "system")
+	os_label = Label.new()
+	os_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	os_label.max_lines_visible = 1
+	os_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
+	os_label.clip_text = true
+	os_label.add_theme_font_size_override("font_size", 12)
+	system_context.add_child(os_label)
+	var system_status_row := HBoxContainer.new()
+	system_status_row.add_theme_constant_override("separation", 6)
+	system_context.add_child(system_status_row)
+	os_state_chip_label = _add_home_dock_chip(system_status_row, "未开机", Color(0.36, 1.0, 0.66))
+	os_progress_bar = _add_home_dock_progress_bar(system_context, Color(0.36, 1.0, 0.66))
+
+	var action_context := _make_home_context_panel(context_row, "快捷操作", Color(0.66, 0.58, 0.94), 0.90, "check")
+	var action_row := HBoxContainer.new()
+	action_row.add_theme_constant_override("separation", 5)
+	action_context.add_child(action_row)
+	home_task_center_button = Button.new()
+	home_task_center_button.name = "HomeTaskCenterButton"
+	home_task_center_button.text = "任务"
+	home_task_center_button.tooltip_text = "打开任务中心"
+	home_task_center_button.custom_minimum_size = Vector2(0, 34)
+	home_task_center_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_style_home_dock_button(home_task_center_button, Color(1.0, 0.72, 0.28))
+	home_task_center_button.pressed.connect(open_task_center_overlay)
+	action_row.add_child(home_task_center_button)
+	home_deliver_order_button = Button.new()
+	home_deliver_order_button.name = "HomeDeliverOrderButton"
+	home_deliver_order_button.text = "交付"
+	home_deliver_order_button.tooltip_text = "检查并交付当前订单"
+	home_deliver_order_button.custom_minimum_size = Vector2(0, 34)
+	home_deliver_order_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_style_home_dock_button(home_deliver_order_button, Color(1.0, 0.72, 0.28))
+	home_deliver_order_button.pressed.connect(_on_deliver_pressed)
+	action_row.add_child(home_deliver_order_button)
+	home_system_monitor_button = Button.new()
+	home_system_monitor_button.name = "HomeSystemMonitorButton"
+	home_system_monitor_button.text = "监视"
+	home_system_monitor_button.tooltip_text = "打开 Max Monitor"
+	home_system_monitor_button.custom_minimum_size = Vector2(0, 34)
+	home_system_monitor_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	_style_home_dock_button(home_system_monitor_button, Color(0.24, 0.78, 0.92))
+	home_system_monitor_button.pressed.connect(_on_open_monitor_pressed)
+	action_row.add_child(home_system_monitor_button)
+
+	var feedback_row := HBoxContainer.new()
+	feedback_row.add_theme_constant_override("separation", 8)
+	feedback_row.custom_minimum_size = Vector2(0, 42)
+	dock_shell.add_child(feedback_row)
+	_build_action_feedback_panel(feedback_row)
+	_build_delivery_feedback_panel(feedback_row)
 
 	order_panel = ORDER_PANEL_SCENE.instantiate()
 	order_panel.component_database = component_database
@@ -657,79 +744,7 @@ func _build_ui() -> void:
 	order_panel.visible = false
 	order_panel.custom_minimum_size = Vector2.ZERO
 	order_panel.mouse_filter = Control.MOUSE_FILTER_IGNORE
-	order_card.add_child(order_panel)
-
-	score_label = Label.new()
-	score_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	score_label.max_lines_visible = 1
-	score_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	score_label.clip_text = true
-	score_label.custom_minimum_size = Vector2(0, 22)
-	score_label.add_theme_font_size_override("font_size", 12)
-	score_label.add_theme_color_override("font_color", Color(0.45, 1.0, 0.82))
-	order_card.add_child(score_label)
-
-	var order_actions := HBoxContainer.new()
-	order_actions.add_theme_constant_override("separation", 6)
-	order_card.add_child(order_actions)
-
-	home_order_desk_button = Button.new()
-	home_order_desk_button.name = "HomeOrderDeskButton"
-	home_order_desk_button.text = "订单大厅"
-	home_order_desk_button.custom_minimum_size = Vector2(0, 24)
-	home_order_desk_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_style_home_dock_button(home_order_desk_button, Color(0.24, 0.78, 0.92))
-	home_order_desk_button.pressed.connect(open_order_desk)
-	order_actions.add_child(home_order_desk_button)
-
-	home_deliver_order_button = Button.new()
-	home_deliver_order_button.name = "HomeDeliverOrderButton"
-	home_deliver_order_button.text = "交付订单"
-	home_deliver_order_button.custom_minimum_size = Vector2(0, 24)
-	home_deliver_order_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_style_home_dock_button(home_deliver_order_button, Color(1.0, 0.72, 0.28))
-	home_deliver_order_button.pressed.connect(_on_deliver_pressed)
-	order_actions.add_child(home_deliver_order_button)
-
-	var system_card := _make_home_dock_card(dock_row, "系统", Color(0.36, 1.0, 0.66), 1.12, "system")
-
-	os_label = Label.new()
-	os_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	os_label.max_lines_visible = 1
-	os_label.text_overrun_behavior = TextServer.OVERRUN_TRIM_ELLIPSIS
-	os_label.custom_minimum_size = Vector2(0, 26)
-	os_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	os_label.add_theme_font_size_override("font_size", 13)
-	system_card.add_child(os_label)
-
-	var system_status_row := HBoxContainer.new()
-	system_status_row.add_theme_constant_override("separation", 6)
-	system_card.add_child(system_status_row)
-
-	os_state_chip_label = _add_home_dock_chip(system_status_row, "未开机", Color(0.36, 1.0, 0.66))
-	os_progress_bar = _add_home_dock_progress_bar(system_card, Color(0.36, 1.0, 0.66))
-
-	var system_actions := VBoxContainer.new()
-	system_actions.add_theme_constant_override("separation", 6)
-	system_card.add_child(system_actions)
-
-	home_system_center_button = Button.new()
-	home_system_center_button.name = "HomeSystemCenterButton"
-	home_system_center_button.text = "系统中心"
-	home_system_center_button.custom_minimum_size = Vector2(0, 24)
-	home_system_center_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_style_home_dock_button(home_system_center_button, Color(0.36, 1.0, 0.66))
-	home_system_center_button.pressed.connect(open_system_center_overlay)
-	system_actions.add_child(home_system_center_button)
-
-	home_system_monitor_button = Button.new()
-	home_system_monitor_button.name = "HomeSystemMonitorButton"
-	home_system_monitor_button.text = "Max Monitor"
-	home_system_monitor_button.custom_minimum_size = Vector2(0, 24)
-	home_system_monitor_button.size_flags_horizontal = Control.SIZE_EXPAND_FILL
-	_style_home_dock_button(home_system_monitor_button, Color(1.0, 0.72, 0.28))
-	home_system_monitor_button.pressed.connect(_on_open_monitor_pressed)
-	system_actions.add_child(home_system_monitor_button)
+	dock_shell.add_child(order_panel)
 
 	root.add_child(home_bottom_dock)
 	_wire_home_bottom_focus()
@@ -893,6 +908,29 @@ func _make_home_dock_card(parent: Container, title_text: String, accent: Color, 
 	title_row.add_child(title)
 	return box
 
+func _make_home_context_panel(parent: Container, title_text: String, accent: Color, ratio: float, icon_key: String) -> VBoxContainer:
+	var panel := PanelContainer.new()
+	panel.name = "%sContextPanel" % title_text
+	panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
+	panel.size_flags_stretch_ratio = ratio
+	panel.add_theme_stylebox_override("panel", _stylebox(Color(accent.r * 0.055, accent.g * 0.055, accent.b * 0.055, 0.94), Color(accent.r, accent.g, accent.b, 0.78), 7))
+	parent.add_child(panel)
+	var box := VBoxContainer.new()
+	box.add_theme_constant_override("separation", 4)
+	panel.add_child(box)
+	var title_row := HBoxContainer.new()
+	title_row.add_theme_constant_override("separation", 5)
+	box.add_child(title_row)
+	title_row.add_child(_make_ui_icon(icon_key, Vector2(18, 18), accent))
+	var title := Label.new()
+	title.text = title_text
+	title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	title.add_theme_font_size_override("font_size", 13)
+	title.add_theme_color_override("font_color", accent)
+	title_row.add_child(title)
+	return box
+
 func _make_ui_icon(icon_key: String, size: Vector2, tint: Color = Color.WHITE) -> TextureRect:
 	var icon := TextureRect.new()
 	var texture = UI_ICON_TEXTURES.get(icon_key, null)
@@ -904,6 +942,17 @@ func _make_ui_icon(icon_key: String, size: Vector2, tint: Color = Color.WHITE) -
 	icon.modulate = tint
 	icon.mouse_filter = Control.MOUSE_FILTER_IGNORE
 	return icon
+
+func _make_ui_art(art_key: String, size: Vector2) -> TextureRect:
+	var art := TextureRect.new()
+	var texture = UI_ART_TEXTURES.get(art_key, null)
+	if texture is Texture2D:
+		art.texture = texture
+	art.custom_minimum_size = size
+	art.expand_mode = TextureRect.EXPAND_IGNORE_SIZE
+	art.stretch_mode = TextureRect.STRETCH_KEEP_ASPECT_CENTERED
+	art.mouse_filter = Control.MOUSE_FILTER_IGNORE
+	return art
 
 func _add_home_dock_chip(parent: Container, text: String, accent: Color) -> Label:
 	var panel := PanelContainer.new()
@@ -960,6 +1009,7 @@ func _add_home_dock_progress_bar(parent: Container, accent: Color) -> ProgressBa
 
 func _wire_home_bottom_focus() -> void:
 	var controls: Array[Button] = [
+		home_workbench_tab_button,
 		home_task_center_button,
 		home_order_desk_button,
 		home_deliver_order_button,
@@ -977,6 +1027,23 @@ func _wire_home_bottom_focus() -> void:
 		var next := valid_controls[mini(valid_controls.size() - 1, index + 1)]
 		control.focus_neighbor_left = previous.get_path()
 		control.focus_neighbor_right = next.get_path()
+
+func _set_home_tab(tab_key: String) -> void:
+	if home_workbench_tab_button:
+		_style_home_dock_tab(home_workbench_tab_button, Color(0.32, 0.92, 0.92), tab_key == "workbench")
+	if home_order_desk_button:
+		_style_home_dock_tab(home_order_desk_button, Color(1.0, 0.72, 0.28), tab_key == "orders")
+	if home_system_center_button:
+		_style_home_dock_tab(home_system_center_button, Color(0.36, 1.0, 0.66), tab_key == "system")
+
+func _on_home_workbench_pressed() -> void:
+	_close_order_desk()
+	_close_task_center()
+	_close_system_center()
+	_close_catalog_overlay()
+	if monitor_overlay:
+		monitor_overlay.visible = false
+	_set_home_tab("workbench")
 
 func _build_order_desk_ui() -> void:
 	order_desk_overlay = ColorRect.new()
@@ -1023,7 +1090,7 @@ func _build_order_desk_ui() -> void:
 	order_desk_progress_label = Label.new()
 	order_desk_progress_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_RIGHT
 	order_desk_progress_label.vertical_alignment = VERTICAL_ALIGNMENT_CENTER
-	order_desk_progress_label.custom_minimum_size = Vector2(230, 48)
+	order_desk_progress_label.custom_minimum_size = Vector2(170, 48)
 	order_desk_progress_label.add_theme_font_size_override("font_size", 15)
 	order_desk_progress_label.add_theme_color_override("font_color", Color(0.78, 0.84, 0.96))
 	header.add_child(order_desk_progress_label)
@@ -1047,7 +1114,7 @@ func _build_order_desk_ui() -> void:
 	shell.add_child(body)
 
 	var queue_panel := PanelContainer.new()
-	queue_panel.custom_minimum_size = Vector2(342, 0)
+	queue_panel.custom_minimum_size = Vector2(320, 0)
 	queue_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	queue_panel.add_theme_stylebox_override("panel", _stylebox(Color(0.024, 0.033, 0.080, 0.98), Color(0.20, 0.80, 0.92), 8))
 	body.add_child(queue_panel)
@@ -1073,7 +1140,7 @@ func _build_order_desk_ui() -> void:
 	order_desk_list.name = "OrderDeskList"
 	order_desk_list.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	order_desk_list.select_mode = ItemList.SELECT_SINGLE
-	order_desk_list.fixed_icon_size = Vector2i(0, 0)
+	order_desk_list.fixed_icon_size = Vector2i(38, 38)
 	order_desk_list.add_theme_font_size_override("font_size", 15)
 	order_desk_list.add_theme_color_override("font_color", Color(0.88, 0.93, 0.98))
 	order_desk_list.add_theme_color_override("font_selected_color", Color(0.03, 0.06, 0.08))
@@ -1109,11 +1176,30 @@ func _build_order_desk_ui() -> void:
 	detail_box.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	detail_scroll.add_child(detail_box)
 
+	var identity_row := HBoxContainer.new()
+	identity_row.add_theme_constant_override("separation", 12)
+	detail_box.add_child(identity_row)
+	order_desk_customer_art = _make_ui_art("customer_office", Vector2(72, 72))
+	identity_row.add_child(order_desk_customer_art)
+	var identity_copy := VBoxContainer.new()
+	identity_copy.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	identity_copy.add_theme_constant_override("separation", 4)
+	identity_row.add_child(identity_copy)
 	order_desk_title_label = Label.new()
 	order_desk_title_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	order_desk_title_label.add_theme_font_size_override("font_size", 29)
+	order_desk_title_label.add_theme_font_size_override("font_size", 28)
 	order_desk_title_label.add_theme_color_override("font_color", Color(1.0, 0.96, 0.82))
-	detail_box.add_child(order_desk_title_label)
+	identity_copy.add_child(order_desk_title_label)
+	order_desk_meta_label = Label.new()
+	order_desk_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	order_desk_meta_label.add_theme_font_size_override("font_size", 14)
+	order_desk_meta_label.add_theme_color_override("font_color", Color(0.82, 0.88, 0.96))
+	identity_copy.add_child(order_desk_meta_label)
+	order_desk_customer_label = Label.new()
+	order_desk_customer_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	order_desk_customer_label.add_theme_font_size_override("font_size", 14)
+	order_desk_customer_label.add_theme_color_override("font_color", Color(0.66, 0.94, 0.92))
+	identity_copy.add_child(order_desk_customer_label)
 
 	var chip_row := HBoxContainer.new()
 	chip_row.add_theme_constant_override("separation", 8)
@@ -1122,18 +1208,6 @@ func _build_order_desk_ui() -> void:
 	order_desk_difficulty_label = _add_order_desk_chip(chip_row, "难度 -", Color(0.24, 0.78, 0.92))
 	order_desk_reward_label = _add_order_desk_chip(chip_row, "奖励 -", Color(1.0, 0.72, 0.28))
 	order_desk_time_label = _add_order_desk_chip(chip_row, "预计 -", Color(0.66, 0.58, 0.94))
-
-	order_desk_meta_label = Label.new()
-	order_desk_meta_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	order_desk_meta_label.add_theme_font_size_override("font_size", 15)
-	order_desk_meta_label.add_theme_color_override("font_color", Color(0.82, 0.88, 0.96))
-	detail_box.add_child(order_desk_meta_label)
-
-	order_desk_customer_label = Label.new()
-	order_desk_customer_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
-	order_desk_customer_label.add_theme_font_size_override("font_size", 15)
-	order_desk_customer_label.add_theme_color_override("font_color", Color(0.66, 0.94, 0.92))
-	detail_box.add_child(order_desk_customer_label)
 
 	var readiness_row := HBoxContainer.new()
 	readiness_row.name = "OrderDeskReadinessRow"
@@ -1153,11 +1227,17 @@ func _build_order_desk_ui() -> void:
 
 	detail_box.add_child(_make_order_desk_section_title("软件配置", Color(0.44, 0.96, 0.72)))
 
+	var software_row := HBoxContainer.new()
+	software_row.add_theme_constant_override("separation", 8)
+	detail_box.add_child(software_row)
+	order_desk_software_art = _make_ui_art("app_driver", Vector2(42, 42))
+	software_row.add_child(order_desk_software_art)
 	order_desk_software_label = Label.new()
 	order_desk_software_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
+	order_desk_software_label.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	order_desk_software_label.add_theme_font_size_override("font_size", 17)
 	order_desk_software_label.add_theme_color_override("font_color", Color(0.9, 0.96, 0.94))
-	detail_box.add_child(order_desk_software_label)
+	software_row.add_child(order_desk_software_label)
 
 	order_desk_action_hint_label = Label.new()
 	order_desk_action_hint_label.autowrap_mode = TextServer.AUTOWRAP_WORD_SMART
@@ -1196,7 +1276,7 @@ func _build_order_desk_ui() -> void:
 
 	var assessment_panel := PanelContainer.new()
 	assessment_panel.name = "OrderDeskAssessmentPanel"
-	assessment_panel.custom_minimum_size = Vector2(318, 0)
+	assessment_panel.custom_minimum_size = Vector2(300, 0)
 	assessment_panel.size_flags_vertical = Control.SIZE_EXPAND_FILL
 	assessment_panel.add_theme_stylebox_override("panel", _stylebox(Color(0.026, 0.018, 0.044, 0.98), Color(0.95, 0.56, 1.0), 8))
 	body.add_child(assessment_panel)
@@ -1205,11 +1285,17 @@ func _build_order_desk_ui() -> void:
 	assessment_box.add_theme_constant_override("separation", 7)
 	assessment_panel.add_child(assessment_box)
 
+	var assessment_header := HBoxContainer.new()
+	assessment_header.add_theme_constant_override("separation", 8)
+	assessment_box.add_child(assessment_header)
 	var assessment_title := Label.new()
 	assessment_title.text = "派工评估"
+	assessment_title.size_flags_horizontal = Control.SIZE_EXPAND_FILL
 	assessment_title.add_theme_font_size_override("font_size", 21)
 	assessment_title.add_theme_color_override("font_color", Color(1.0, 0.80, 1.0))
-	assessment_box.add_child(assessment_title)
+	assessment_header.add_child(assessment_title)
+	order_desk_grade_art = _make_ui_art("badge_bronze", Vector2(48, 48))
+	assessment_header.add_child(order_desk_grade_art)
 
 	var assessment_subtitle := Label.new()
 	assessment_subtitle.text = "接单前先看范围、收益、风险和交付影响。"
@@ -1251,8 +1337,12 @@ func _build_order_desk_ui() -> void:
 func open_order_desk() -> void:
 	if order_desk_overlay == null:
 		return
+	_close_task_center()
+	_close_system_center()
+	_close_catalog_overlay()
 	order_desk_overlay.visible = true
 	order_desk_overlay.move_to_front()
+	_set_home_tab("orders")
 	_refresh_order_desk()
 	var preferred: int = current_order_index if available_order_indices.has(current_order_index) else _first_available_order_index(available_order_indices)
 	_select_order_desk_order(preferred)
@@ -1261,6 +1351,7 @@ func open_order_desk() -> void:
 func _close_order_desk() -> void:
 	if order_desk_overlay:
 		order_desk_overlay.visible = false
+	_set_home_tab("workbench")
 
 func _refresh_order_desk() -> void:
 	if order_desk_list == null:
@@ -1280,7 +1371,8 @@ func _refresh_order_desk() -> void:
 			str(order.get("name", "订单")),
 			str(order.get("customer_type", "客户")),
 		]
-		var item_index: int = order_desk_list.add_item(label)
+		var order_icon = UI_ART_TEXTURES.get(_order_customer_art_key(order), null)
+		var item_index: int = order_desk_list.add_item(label, order_icon if order_icon is Texture2D else null)
 		order_desk_list.set_item_metadata(item_index, order_index)
 		if order_index == current_order_index:
 			order_desk_list.set_item_custom_fg_color(item_index, Color(0.38, 1.0, 0.64))
@@ -1310,6 +1402,9 @@ func _select_order_desk_order(order_index: int) -> void:
 		order_desk_title_label.text = "暂无可接订单"
 		order_desk_meta_label.text = "首发订单已全部完成。"
 		order_desk_customer_label.text = "返回工作台继续优化装机体验。"
+		order_desk_customer_art.texture = UI_ART_TEXTURES.get("customer_office", null)
+		order_desk_grade_art.texture = UI_ART_TEXTURES.get("badge_bronze", null)
+		order_desk_software_art.texture = UI_ART_TEXTURES.get("app_files", null)
 		order_desk_hardware_ready_label.text = "没有新的硬件需求"
 		order_desk_software_ready_label.text = "没有新的软件任务"
 		order_desk_delivery_ready_label.text = "等待下一批客户"
@@ -1340,11 +1435,14 @@ func _select_order_desk_order(order_index: int) -> void:
 	order_desk_time_label.text = "预计 %d 分钟" % int(order.get("estimated_minutes", 5))
 	order_desk_meta_label.text = "客户类型：%s" % str(order.get("customer_type", "客户"))
 	order_desk_customer_label.text = "客户：%s" % str(order.get("customer", "客户"))
+	order_desk_customer_art.texture = UI_ART_TEXTURES.get(_order_customer_art_key(order), null)
+	order_desk_grade_art.texture = UI_ART_TEXTURES.get(_order_grade_art_key(order), null)
 	order_desk_hardware_ready_label.text = _order_desk_hardware_readiness_text(order, is_current_order)
 	order_desk_software_ready_label.text = _order_desk_software_readiness_text(order, is_current_order)
 	order_desk_delivery_ready_label.text = _order_desk_delivery_readiness_text(order, is_current_order)
 	order_desk_requirements_label.text = _format_order_requirements_multiline(order)
 	order_desk_software_label.text = _format_software_tasks(order)
+	order_desk_software_art.texture = UI_ART_TEXTURES.get(_order_software_art_key(order), null)
 	order_desk_scope_label.text = _order_desk_scope_text(order)
 	order_desk_income_label.text = _order_desk_income_text(order)
 	order_desk_risk_label.text = _order_desk_risk_text(order, is_available)
@@ -1366,6 +1464,32 @@ func _select_order_desk_order(order_index: int) -> void:
 		order_desk_accept_button.disabled = true
 		order_desk_deliver_button.disabled = true
 		order_desk_action_hint_label.text = "继续完成当前工单以解锁这类客户。"
+
+func _order_customer_art_key(order: Dictionary) -> String:
+	var customer_type := str(order.get("customer_type", ""))
+	if customer_type.contains("创作者") or customer_type.contains("主播"):
+		return "customer_creator"
+	if customer_type.contains("电竞") or customer_type.contains("玩家"):
+		return "customer_gamer"
+	return "customer_office"
+
+func _order_grade_art_key(order: Dictionary) -> String:
+	var difficulty := int(order.get("difficulty", 1))
+	if difficulty >= 5:
+		return "badge_gold"
+	if difficulty >= 3:
+		return "badge_silver"
+	return "badge_bronze"
+
+func _order_software_art_key(order: Dictionary) -> String:
+	var tasks: Array = order.get("software_tasks", [])
+	if tasks.has("benchmark"):
+		return "app_benchmark"
+	if tasks.has("gpu_driver"):
+		return "app_gpu"
+	if tasks.has("drivers"):
+		return "app_driver"
+	return "app_files"
 
 func _on_order_desk_accept_pressed() -> void:
 	if order_desk_selected_index < 0:
@@ -1694,10 +1818,14 @@ func _make_task_center_button(text: String, accent: Color) -> Button:
 func open_task_center_overlay() -> void:
 	if task_center_overlay == null:
 		return
+	_close_order_desk()
+	_close_system_center()
+	_close_catalog_overlay()
 	if not task_center_overlay.visible:
 		task_center_previous_focus = get_viewport().gui_get_focus_owner()
 	task_center_overlay.visible = true
 	task_center_overlay.move_to_front()
+	_set_home_tab("workbench")
 	_refresh_task_center()
 	if task_center_next_button:
 		task_center_next_button.grab_focus()
@@ -2072,6 +2200,7 @@ func open_system_center_overlay() -> void:
 		monitor_overlay.visible = false
 	system_center_overlay.visible = true
 	system_center_overlay.move_to_front()
+	_set_home_tab("system")
 	_refresh_system_center()
 	if system_booted and system_center_info_button:
 		system_center_info_button.grab_focus()
@@ -2397,6 +2526,16 @@ func _style_home_dock_button(button: Button, accent: Color) -> void:
 	button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
 	_apply_button_icon(button, _button_icon_key(button), 16)
 
+func _style_home_dock_tab(button: Button, accent: Color, active: bool) -> void:
+	var base := Color(accent.r * 0.20, accent.g * 0.20, accent.b * 0.20, 0.98) if active else Color(0.024, 0.034, 0.078, 0.94)
+	var border := accent if active else Color(accent.r * 0.62, accent.g * 0.62, accent.b * 0.62, 0.84)
+	button.add_theme_stylebox_override("normal", _catalog_stylebox(base, border, 7, 6))
+	button.add_theme_stylebox_override("hover", _catalog_stylebox(base.lightened(0.10), accent.lightened(0.12), 7, 6))
+	button.add_theme_stylebox_override("pressed", _catalog_stylebox(Color(0.12, 0.16, 0.12, 0.98), Color(1.0, 0.72, 0.28), 7, 6))
+	button.add_theme_font_size_override("font_size", 13)
+	button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0) if active else Color(0.78, 0.86, 0.94))
+	_apply_button_icon(button, _button_icon_key(button), 18)
+
 func _style_catalog_mode_button(button: Button, accent: Color, active: bool) -> void:
 	var bg := Color(accent.r * 0.16, accent.g * 0.16, accent.b * 0.16, 0.98) if active else Color(0.020, 0.028, 0.062, 0.96)
 	var border := accent if active else Color(accent.r * 0.55, accent.g * 0.55, accent.b * 0.55, 0.75)
@@ -2408,6 +2547,18 @@ func _style_catalog_mode_button(button: Button, accent: Color, active: bool) -> 
 
 func _button_icon_key(button: Button) -> String:
 	match button.name:
+		"FinishCheckButton":
+			return "check"
+		"PowerButton":
+			return "power"
+		"TopDeliverButton":
+			return "delivery"
+		"SaveButton":
+			return "save"
+		"LoadButton":
+			return "load"
+		"RestartButton":
+			return "restart"
 		"OpenTaskCenterButton", "HomeTaskCenterButton", "OrderDeskTaskCenterButton", "TaskCenterNextButton", "TutorialActionButton":
 			return "tasks"
 		"OpenShopCatalogButton", "CatalogWorkspaceShopButton", "CatalogShopModeButton":
@@ -2420,6 +2571,8 @@ func _button_icon_key(button: Button) -> String:
 			return "check"
 		"FooterPowerButton":
 			return "power"
+		"HomeWorkbenchTabButton":
+			return "workbench"
 		"HomeDeliverOrderButton":
 			return "delivery"
 		"HomeSystemCenterButton":
@@ -2897,10 +3050,12 @@ func _build_pause_ui() -> void:
 	main_menu_button.pressed.connect(_on_save_and_main_menu_pressed)
 	box.add_child(main_menu_button)
 
-func _build_action_feedback_panel(parent: VBoxContainer) -> void:
+func _build_action_feedback_panel(parent: Container) -> void:
 	action_feedback_panel = PanelContainer.new()
 	action_feedback_panel.name = "ActionFeedbackPanel"
 	action_feedback_panel.custom_minimum_size = Vector2(0, 40)
+	action_feedback_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	action_feedback_panel.size_flags_stretch_ratio = 1.0
 	action_feedback_panel.add_theme_stylebox_override("panel", _action_feedback_style("idle"))
 	parent.add_child(action_feedback_panel)
 
@@ -2929,10 +3084,12 @@ func _build_action_feedback_panel(parent: VBoxContainer) -> void:
 	action_feedback_detail.add_theme_color_override("font_color", Color(0.68, 0.78, 0.92))
 	box.add_child(action_feedback_detail)
 
-func _build_delivery_feedback_panel(parent: VBoxContainer) -> void:
+func _build_delivery_feedback_panel(parent: Container) -> void:
 	delivery_feedback_panel = PanelContainer.new()
 	delivery_feedback_panel.name = "DeliveryFeedbackPanel"
-	delivery_feedback_panel.custom_minimum_size = Vector2(0, 66)
+	delivery_feedback_panel.custom_minimum_size = Vector2(0, 40)
+	delivery_feedback_panel.size_flags_horizontal = Control.SIZE_EXPAND_FILL
+	delivery_feedback_panel.size_flags_stretch_ratio = 1.0
 	delivery_feedback_panel.add_theme_stylebox_override("panel", _delivery_feedback_style("idle"))
 	parent.add_child(delivery_feedback_panel)
 
@@ -5548,6 +5705,7 @@ func _style_top_button(button: Button) -> void:
 	button.add_theme_stylebox_override("hover", _stylebox(Color(0.12, 0.08, 0.32, 0.95), Color(0.78, 0.36, 1.0), 12))
 	button.add_theme_stylebox_override("pressed", _stylebox(Color(0.20, 0.08, 0.42, 0.95), Color(1.0, 0.68, 0.22), 12))
 	button.add_theme_color_override("font_color", Color(1.0, 1.0, 1.0))
+	_apply_button_icon(button, _button_icon_key(button), 18)
 
 func _stylebox(color: Color, border_color: Color, radius: int) -> StyleBoxFlat:
 	var box := StyleBoxFlat.new()

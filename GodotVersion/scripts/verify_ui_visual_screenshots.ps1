@@ -109,6 +109,26 @@ function Invoke-VisualScreenshotTest {
     }
 }
 
+function Invoke-GodotImportPass {
+    Write-Host "[visual] Importing Godot resources before screenshot tests"
+    $arguments = @(
+        '--headless',
+        '--editor',
+        '--path',
+        $projectDir,
+        '--import',
+        '--quit-after',
+        '2'
+    )
+    $output = & $GodotPath @arguments 2>&1
+    $exitCode = $LASTEXITCODE
+    $output | ForEach-Object { Write-Host $_ }
+    if ($exitCode -ne 0) {
+        throw "Godot resource import failed with exit code ${exitCode}."
+    }
+}
+
+Invoke-GodotImportPass
 foreach ($test in $Tests) {
     if ($perSizeTests -contains $test) {
         foreach ($size in @('1280x720', '1366x768', '1920x1080')) {

@@ -70,14 +70,16 @@ UI 截图验证覆盖 1280x720、1366x768 和 1920x1080。截图会检查首页�
 - Driver Tool、系统信息、Benchmark、Stability Test、Files 和交付前检查。
 - 软件配置完成度会影响交付评分和订单结果。
 - 12 单首发订单、保存读取、新手引导、金手指开发测试入口和自动化玩家流程。
+- 首页底部采用“装机台 / 订单大厅 / 系统中心”模式标签，订单大厅使用宽屏工单队列、客户头像、软件应用图标和交付等级徽章。
+- UI 使用本地原创 SVG 视觉资产；截图测试会先自动执行 Godot 资源导入，再检查三档分辨率的布局、裁切和交互入口。
 
 ## 当前候选包证据
 
 - 版本：`0.1.0-dev`
-- Windows ZIP SHA-256：`dc5a2cec06e35799c8535886f0dd76897f36645e866467defcc2f0e28dd9b73d`
-- Windows EXE SHA-256：`d72e724a2c635c17ffeb74cd578a21e7b45812565d5b8da487c6ee8a4ec8b0ef`
+- Windows ZIP SHA-256：`fb3ad8d80ca52bdc24866446d8842b2c37f384962287775015c5fb5ae9ddf3b8`
+- Windows EXE SHA-256：`5679e0f9c03d28ecc2533eb239a459705401cd38a671996c4e4a8dca8872c02b`
 - 本机视觉套件：`warnings=0`
-- MCP UI smoke：到达“交付订单”
+- MCP UI smoke：`ui_texts=250`，到达“交付订单”
 
 哈希绑定的完整报告保留在本机 `GodotVersion/build/`，不会进入 GitHub 源码提交。
 

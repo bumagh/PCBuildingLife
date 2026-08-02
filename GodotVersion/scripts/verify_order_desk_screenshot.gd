@@ -53,6 +53,12 @@ func _assert_order_desk_layout(game: Control, size: Vector2i) -> bool:
 		return _fail("Order desk overlay does not start at viewport origin.")
 	if overlay_rect.end.x < viewport_size.x - 1.0 or overlay_rect.end.y < viewport_size.y - 1.0:
 		return _fail("Order desk overlay does not fill viewport at %dx%d." % [size.x, size.y])
+	if game.order_desk_customer_art == null or game.order_desk_customer_art.texture == null:
+		return _fail("Order customer illustration is missing at %dx%d." % [size.x, size.y])
+	if game.order_desk_grade_art == null or game.order_desk_grade_art.texture == null:
+		return _fail("Order grade badge is missing at %dx%d." % [size.x, size.y])
+	if game.order_desk_software_art == null or game.order_desk_software_art.texture == null:
+		return _fail("Order software illustration is missing at %dx%d." % [size.x, size.y])
 
 	var list_rect: Rect2 = game.order_desk_list.get_global_rect()
 	var title_rect: Rect2 = game.order_desk_title_label.get_global_rect()
@@ -64,6 +70,8 @@ func _assert_order_desk_layout(game: Control, size: Vector2i) -> bool:
 	var deliver_rect: Rect2 = game.order_desk_deliver_button.get_global_rect()
 	if list_rect.size.x < 260.0 or list_rect.size.y < 390.0:
 		return _fail("Order queue is too cramped at %dx%d." % [size.x, size.y])
+	if game.order_desk_list.get_item_count() == 0 or game.order_desk_list.get_item_icon(0) == null:
+		return _fail("Order queue items are missing customer illustrations at %dx%d." % [size.x, size.y])
 	if title_rect.position.x <= list_rect.end.x:
 		return _fail("Order detail overlaps queue at %dx%d." % [size.x, size.y])
 	if hardware_ready_rect.position.y <= title_rect.position.y or hardware_ready_rect.size.x < 150.0:

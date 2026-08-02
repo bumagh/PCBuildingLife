@@ -73,6 +73,8 @@ func _assert_home_bottom_dock_layout(game: Control, size: Vector2i) -> bool:
 		return _fail("Catalog workspace panel is missing at %dx%d." % [size.x, size.y])
 	if game.home_bottom_dock == null:
 		return _fail("HomeBottomDock is missing at %dx%d." % [size.x, size.y])
+	if game.home_workbench_tab_button == null or game.home_workbench_tab_button.icon == null:
+		return _fail("Workbench mode tab is missing its illustrated icon at %dx%d." % [size.x, size.y])
 
 	var dock_rect: Rect2 = game.home_bottom_dock.get_global_rect()
 	var tabs_rect: Rect2 = game.main_tabs.get_global_rect()
